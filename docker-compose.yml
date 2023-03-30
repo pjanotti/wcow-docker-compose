@@ -1,0 +1,28 @@
+version: "3.8"
+
+networks:
+  default:
+    name: wocw-network
+    ipam:
+      driver: windows
+      config:
+         # For a host endpoint to be accessible the containers a firewall rule opening the target port for
+         # the gateway IP address must be created.
+        - subnet: 10.1.1.0/24
+          gateway: 10.1.1.1
+
+services:
+
+  1st-server:
+    image: forward-server:latest
+    ports:
+      - "5001:5000"
+    environment:
+      FORWARD_SERVER: 2nd-server:5000
+
+  2nd-server:
+    image: forward-server:latest
+    ports:
+      - "5002:5000"
+    environment:
+        FORWARD_SERVER: 10.1.1.1:5000
